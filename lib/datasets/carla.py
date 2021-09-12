@@ -167,7 +167,7 @@ class Carla(BaseDataset):
                         crop_img = np.expand_dims(crop_img, axis=0)
                         crop_img = torch.from_numpy(crop_img)
                         pred = self.inference(config, model, crop_img, flip)
-                        preds[:, :, h0:h1, w0:w1] += pred[:, :self.num_classes, 0:h1 - h0, 0:w1 - w0]
+                        preds[:, :, h0:h1, w0:w1] += pred[:, :, 0:h1 - h0, 0:w1 - w0]
                         count[:, :, h0:h1, w0:w1] += 1
                 preds = preds / count
                 preds = preds[:, :, :height, :width]
@@ -176,8 +176,6 @@ class Carla(BaseDataset):
                 preds, (ori_height, ori_width),
                 mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
             )
-            if preds.shape[1] != final_pred.shape[1]:
-                preds = preds[:, :final_pred.shape[1]]
             final_pred += preds
         return final_pred
 
