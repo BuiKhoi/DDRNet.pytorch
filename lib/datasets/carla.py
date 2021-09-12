@@ -53,6 +53,10 @@ class Carla(BaseDataset):
             5: 5, 6: 6, 7: 7, 8: 8
         }
 
+        # Nothing, Bridges, Pedestrian, Road, Road line, Side walk, Traffic sign, Traffic light, Vehicles
+
+        # self.class_weights = None
+
         self.class_weights = torch.FloatTensor([
             0.8373, 1.0345, 1.1843, 0.8373,
             1.0577, 0.918, 1.0489, 1.045, 1.037
