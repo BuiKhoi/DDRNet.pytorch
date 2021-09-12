@@ -98,6 +98,20 @@ def get_increment_folder_name(folder_path, proposed_folder_name):
     folder_path = folder_path / (f"{proposed_folder_name}_{folder_index}_{datetime.now().strftime('%Y%m%d%H%M%S')}")
     return folder_path
 
+def get_last_checkpoint(final_output_dir):
+    final_output_dir = Path(final_output_dir)
+    parent = final_output_dir.parent
+    folder_name = final_output_dir.parts[-1]
+    index = int(folder_name.split("_")[-2])
+    while index >= 0:
+        prev_folder = list(parent.glob(f"*_{index}_*"))
+        if len(prev_folder) == 1:
+            checkpoint_file = prev_folder[0] / 'checkpoint.pth.tar'
+            if checkpoint_file.exists():
+                return str(checkpoint_file)
+        index -= 1
+    return ""
+
 def create_logger(cfg, cfg_name, phase='train'):
     root_output_dir = Path(cfg.OUTPUT_DIR)
     # set up logger
@@ -130,6 +144,7 @@ def create_logger(cfg, cfg_name, phase='train'):
     print('=> creating {}'.format(tensorboard_log_dir))
     tensorboard_log_dir.mkdir(parents=True, exist_ok=True)
 
+    print("Training status saving to", str(final_output_dir))
     return logger, str(final_output_dir), str(tensorboard_log_dir)
 
 def get_confusion_matrix(label, pred, size, num_class, ignore=-1):

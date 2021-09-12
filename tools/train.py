@@ -31,7 +31,7 @@ from config import update_config
 from core.criterion import CrossEntropy, OhemCrossEntropy
 from core.function import train, validate
 from utils.modelsummary import get_model_summary
-from utils.utils import create_logger, FullModel
+from utils.utils import create_logger, FullModel, get_last_checkpoint
 
 
 def parse_args():
@@ -250,9 +250,9 @@ def main():
     best_mIoU = 0
     last_epoch = 0
     if config.TRAIN.RESUME:
-        model_state_file = os.path.join(final_output_dir,
-                                        'checkpoint.pth.tar')
+        model_state_file = get_last_checkpoint(final_output_dir)
         if os.path.isfile(model_state_file):
+            logger.info(f"Trying to resume from {model_state_file}")
             checkpoint = torch.load(model_state_file, map_location={'cuda:0': 'cpu'})
             best_mIoU = checkpoint['best_mIoU']
             last_epoch = checkpoint['epoch']
@@ -263,6 +263,8 @@ def main():
             optimizer.load_state_dict(checkpoint['optimizer'])
             logger.info("=> loaded checkpoint (epoch {})"
                         .format(checkpoint['epoch']))
+        else:
+            logger.info(f"Cannot find any previously trained model")
         if distributed:
             torch.distributed.barrier()
 

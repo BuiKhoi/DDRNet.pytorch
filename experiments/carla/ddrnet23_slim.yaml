@@ -11,7 +11,7 @@ PRINT_FREQ: 10
 DATASET:
   DATASET: carla
   ROOT: /content/training_data/
-  TEST_SET: 'list/carla/test.lst'
+  TEST_SET: 'list/carla/val.lst'
   TRAIN_SET: 'list/carla/train.lst'
   NUM_CLASSES: 8
 MODEL:
