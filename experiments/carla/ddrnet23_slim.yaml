@@ -16,7 +16,6 @@ DATASET:
   NUM_CLASSES: 8
 MODEL:
   NAME: ddrnet_23_slim
-  SAVE_NAME: carla_ddr_23_slim
   NUM_OUTPUTS: 2
   PRETRAINED: "pretrained_model/DDRNet_s_300.pth"
   ALIGN_CORNERS: false

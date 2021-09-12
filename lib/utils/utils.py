@@ -11,6 +11,7 @@ from __future__ import print_function
 import os
 import logging
 import time
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -82,6 +83,21 @@ class AverageMeter(object):
     def average(self):
         return self.avg
 
+def get_increment_folder_name(folder_path, proposed_folder_name):
+    if folder_path.exists():
+        existing_folders = os.listdir(folder_path)
+        existing_folders = [ef for ef in existing_folders if ef.startswith(proposed_folder_name)]
+    else:
+        existing_folders = []
+    folder_index = 0
+    if len(existing_folders) != 0:
+        existing_folders.sort(key=lambda x: int(x.split("_")[-2]))
+        folder_index = int(existing_folders[-1].split("_")[-2])
+        folder_index += 1
+
+    folder_path = folder_path / (f"{proposed_folder_name}_{folder_index}_{datetime.now().strftime('%Y%m%d%H%M%S')}")
+    return folder_path
+
 def create_logger(cfg, cfg_name, phase='train'):
     root_output_dir = Path(cfg.OUTPUT_DIR)
     # set up logger
@@ -90,10 +106,10 @@ def create_logger(cfg, cfg_name, phase='train'):
         root_output_dir.mkdir()
 
     dataset = cfg.DATASET.DATASET
-    model = cfg.MODEL.SAVE_NAME
+    model = cfg.MODEL.NAME
     cfg_name = os.path.basename(cfg_name).split('.')[0]
 
-    final_output_dir = root_output_dir / dataset / cfg_name
+    final_output_dir = get_increment_folder_name(root_output_dir / dataset, cfg_name)
 
     print('=> creating {}'.format(final_output_dir))
     final_output_dir.mkdir(parents=True, exist_ok=True)
