@@ -28,6 +28,7 @@ import utils.distributed as dist
 vedioCap = Vedio('./output/cdOffice.mp4')
 map16 = Map16(vedioCap)
 
+
 def reduce_tensor(inp):
     """
     Reduce the loss from all processes so that 
@@ -49,9 +50,9 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
 
     batch_time = AverageMeter()
     ave_loss = AverageMeter()
-    ave_acc  = AverageMeter()
+    ave_acc = AverageMeter()
     tic = time.time()
-    cur_iters = epoch*epoch_iters
+    cur_iters = epoch * epoch_iters
     writer = writer_dict['writer']
     global_steps = writer_dict['train_global_steps']
 
@@ -62,7 +63,7 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
 
         losses, _, acc = model(images, labels)
         loss = losses.mean()
-        acc  = acc.mean()
+        acc = acc.mean()
 
         if dist.is_distributed():
             reduced_loss = reduce_tensor(loss)
@@ -84,18 +85,19 @@ def train(config, epoch, num_epoch, epoch_iters, base_lr,
         lr = adjust_learning_rate(optimizer,
                                   base_lr,
                                   num_iters,
-                                  i_iter+cur_iters)
+                                  i_iter + cur_iters)
 
         if i_iter % config.PRINT_FREQ == 0 and dist.get_rank() == 0:
             msg = 'Epoch: [{}/{}] Iter:[{}/{}], Time: {:.2f}, ' \
-                  'lr: {}, Loss: {:.6f}, Acc:{:.6f}' .format(
-                      epoch, num_epoch, i_iter, epoch_iters,
-                      batch_time.average(), [x['lr'] for x in optimizer.param_groups], ave_loss.average(),
-                      ave_acc.average())
+                  'lr: {}, Loss: {:.6f}, Acc:{:.6f}'.format(
+                epoch, num_epoch, i_iter, epoch_iters,
+                batch_time.average(), [x['lr'] for x in optimizer.param_groups], ave_loss.average(),
+                ave_acc.average())
             logging.info(msg)
 
     writer.add_scalar('train_loss', ave_loss.average(), global_steps)
     writer_dict['train_global_steps'] = global_steps + 1
+
 
 def validate(config, testloader, model, writer_dict):
     model.eval()
@@ -184,7 +186,7 @@ def testval(config, test_dataset, testloader, model,
                     pred, size[-2:],
                     mode='bilinear', align_corners=config.MODEL.ALIGN_CORNERS
                 )
-            
+
             # # crf used for post-processing
             # postprocessor = DenseCRF(   )
             # # image
@@ -198,9 +200,9 @@ def testval(config, test_dataset, testloader, model,
             # timage = timage.astype(np.uint8)
             # # pred
             # tprob = torch.softmax(pred, dim=1)[0].cpu().numpy()
-            # pred = postprocessor(np.array(timage, dtype=np.uint8), tprob)    
+            # pred = postprocessor(np.array(timage, dtype=np.uint8), tprob)
             # pred = torch.from_numpy(pred).unsqueeze(0)
-            
+
             confusion_matrix += get_confusion_matrix(
                 label,
                 pred,
@@ -226,8 +228,8 @@ def testval(config, test_dataset, testloader, model,
     pos = confusion_matrix.sum(1)
     res = confusion_matrix.sum(0)
     tp = np.diag(confusion_matrix)
-    pixel_acc = tp.sum()/pos.sum()
-    mean_acc = (tp/np.maximum(1.0, pos)).mean()
+    pixel_acc = tp.sum() / pos.sum()
+    mean_acc = (tp / np.maximum(1.0, pos)).mean()
     IoU_array = (tp / np.maximum(1.0, pos + res - tp))
     mean_IoU = IoU_array.mean()
 
@@ -258,7 +260,7 @@ def test(config, test_dataset, testloader, model,
                 # mean=[0.485, 0.456, 0.406],
                 #  std=[0.229, 0.224, 0.225]
                 image = image.squeeze(0)
-                image = image.numpy().transpose((1,2,0))
+                image = image.numpy().transpose((1, 2, 0))
                 image *= [0.229, 0.224, 0.225]
                 image += [0.485, 0.456, 0.406]
                 image *= 255.0
@@ -266,9 +268,9 @@ def test(config, test_dataset, testloader, model,
 
                 _, pred = torch.max(pred, dim=1)
                 pred = pred.squeeze(0).cpu().numpy()
-                map16.visualize_result(image, pred, sv_dir, name[0]+'.jpg')
-                # sv_path = os.path.join(sv_dir, 'test_results')
-                # if not os.path.exists(sv_path):
-                #     os.mkdir(sv_path)
-                # test_dataset.save_pred(image, pred, sv_path, name)
+                # map16.visualize_result(image, pred, sv_dir, name[0]+'.jpg')
+                sv_path = os.path.join(sv_dir, 'test_results')
+                if not os.path.exists(sv_path):
+                    os.mkdir(sv_path)
+                test_dataset.save_pred(pred, sv_path, name)
         vedioCap.releaseCap()

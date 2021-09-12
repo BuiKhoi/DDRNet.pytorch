@@ -14,3 +14,4 @@ from .pascal_ctx import PASCALContext as pascal_ctx
 from .ade20k import ADE20K as ade20k
 from .map import MAP as map
 from .cocostuff import COCOStuff as cocostuff
+from .carla import Carla as carla
