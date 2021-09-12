@@ -13,7 +13,7 @@ DATASET:
   ROOT: /content/training_data/
   TEST_SET: 'list/carla/val.lst'
   TRAIN_SET: 'list/carla/train.lst'
-  NUM_CLASSES: 8
+  NUM_CLASSES: 9
 MODEL:
   NAME: ddrnet_23_slim
   NUM_OUTPUTS: 2

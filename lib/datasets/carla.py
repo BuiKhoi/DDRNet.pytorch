@@ -49,18 +49,17 @@ class Carla(BaseDataset):
             self.files = self.files[:num_samples]
 
         self.label_mapping = {
-            0: ignore_label, 1: 0, 2: 1, 3: 2,
-            4: 3, 5: 4, 6: 5, 7: 6, 8: 7
+            0: 0, 1: 1, 2: 2, 3: 3, 4: 4,
+            5: 5, 6: 6, 7: 7, 8: 8
         }
 
-        self.class_weights = None
-
-        # self.class_weights = torch.FloatTensor([
-        #       1.0345, 1.1843, 0.8373, 1.0577,
-        #       0.918, 1.0489, 1.045, 1.037
-        # ]).cuda()
+        self.class_weights = torch.FloatTensor([
+            0.8373, 1.0345, 1.1843, 0.8373,
+            1.0577, 0.918, 1.0489, 1.045, 1.037
+        ]).cuda()
 
         self.color_palette = [
+            (0, 0, 0),
             (150, 100, 100),
             (220, 20, 60),
             (128, 64, 128),
