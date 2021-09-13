@@ -58,8 +58,8 @@ class Carla(BaseDataset):
         # self.class_weights = None
 
         self.class_weights = torch.FloatTensor([
-            0.8373, 1.0345, 1.1843, 0.8373,
-            1.0577, 0.918, 1.0489, 1.045, 1.037
+            0.2373, 0.9345, 1.2843, 0.8373,
+            1.2577, 0.918, 1.2489, 1.245, 1.037
         ]).cuda()
 
         self.color_palette = [
@@ -186,7 +186,7 @@ class Carla(BaseDataset):
     def save_pred(self, image, preds, sv_path, name):
         h, w = preds.shape
         image_canvas = np.empty((w, h*2, 3), np.uint8)
-        image_canvas[:h] = image
+        image_canvas[:h] = image[:, :, ::-1]
         image_canvas[h:] = self.fill_color_palette(self.color_palette, preds)
         cv2.imwrite(
             os.path.join(sv_path, name[0] + '.png'),
