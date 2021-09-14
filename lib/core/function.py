@@ -12,6 +12,7 @@ import numpy as np
 import numpy.ma as ma
 from tqdm import tqdm
 from PIL import Image
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -106,7 +107,7 @@ def validate(config, testloader, model, writer_dict):
     confusion_matrix = np.zeros(
         (config.DATASET.NUM_CLASSES, config.DATASET.NUM_CLASSES, nums))
     with torch.no_grad():
-        for idx, batch in enumerate(testloader):
+        for idx, batch in tqdm(enumerate(testloader)):
             image, label, _, _ = batch
             size = label.size()
             image = image.cuda()
@@ -128,9 +129,6 @@ def validate(config, testloader, model, writer_dict):
                     config.DATASET.NUM_CLASSES,
                     config.TRAIN.IGNORE_LABEL
                 )
-
-            if idx % 10 == 0:
-                print(idx)
 
             loss = losses.mean()
             if dist.is_distributed():

@@ -298,7 +298,7 @@ def main():
 
         if args.local_rank <= 0:
             logger.info('=> saving checkpoint to {}'.format(
-                final_output_dir + 'checkpoint.pth.tar'))
+                final_output_dir + '/checkpoint.pth.tar'))
             torch.save({
                 'epoch': epoch + 1,
                 'best_mIoU': best_mIoU,

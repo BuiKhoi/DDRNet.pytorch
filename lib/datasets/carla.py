@@ -58,7 +58,7 @@ class Carla(BaseDataset):
         # self.class_weights = None
 
         self.class_weights = torch.FloatTensor([
-            0.2373, 0.9345, 1.2843, 0.8373,
+            0.0373, 0.9345, 1.4843, 0.8373,
             1.2577, 0.918, 1.2489, 1.245, 1.037
         ]).cuda()
 
