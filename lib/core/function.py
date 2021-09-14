@@ -257,8 +257,6 @@ def test(config, test_dataset, testloader, model,
                 )
 
             if sv_pred:
-                # mean=[0.485, 0.456, 0.406],
-                #  std=[0.229, 0.224, 0.225]
                 image = image.squeeze(0)
                 image = image.numpy().transpose((1, 2, 0))
                 image *= [0.229, 0.224, 0.225]
@@ -268,7 +266,6 @@ def test(config, test_dataset, testloader, model,
 
                 _, pred = torch.max(pred, dim=1)
                 pred = pred.squeeze(0).cpu().numpy()
-                # map16.visualize_result(image, pred, sv_dir, name[0]+'.jpg')
                 sv_path = os.path.join(sv_dir, 'test_results')
                 if not os.path.exists(sv_path):
                     os.mkdir(sv_path)
